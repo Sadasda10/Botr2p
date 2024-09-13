@@ -1,0 +1,27 @@
+name: Bot Workflow
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Download Executable
+        run: Invoke-WebRequest https://example.com/your-bot.exe -OutFile bot.exe
+      
+      - name: Run Bot Executable
+        run: .\bot.exe
+        timeout-minutes: 600
+
+      - name: Download and Set Up Cpolar
+        run: |
+          Invoke-WebRequest https://www.cpolar.com/downloads/CPOLAR_Windows.zip -OutFile cpolar.zip
+          Expand-Archive cpolar.zip -DestinationPath C:\cpolar
+          $env:PATH += ";C:\cpolar"
+
+      - name: Authenticate Cpolar
+        run: .\cpolar authtoken YOUR_NEW_AUTH_TOKEN
+
+      - name: Start Cpolar Tunnel
+        run: .\cpolar http 8000
